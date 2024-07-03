@@ -51,11 +51,18 @@ El cliente debe enviar al servidor la cadena pasada como parámetro. Una vez rec
 Bibliography
 =================================
 Signal (IPC)
+
 Sending and Intercepting a Signal in C
+
 sigaction
+
 Playing around with signals
+
 Bitwise Operators in C/C++
+
 Bitwise Operators in C Programming
+
 BitwiseCmd
+
 How many bits or bytes are there in a character?
 
