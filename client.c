@@ -5,69 +5,122 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rbuitrag <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/03 17:33:12 by rbuitrag          #+#    #+#             */
-/*   Updated: 2024/07/03 19:16:18 by rbuitrag         ###   ########.fr       */
+/*   Created: 2024/07/09 16:22:12 by rbuitrag          #+#    #+#             */
+/*   Updated: 2024/07/09 19:34:21 by rbuitrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
 
-int	ft_atoi(char *str)
+#include"minitalk.h"
+
+
+void	ft_putchar(char c)
 {
-	long	nb;
-	int		len;
-	int		i;
-
-	len = 0;
-	while (str && str[len])
-		len++;
-	i = 0;
-	nb = 0;
-	while (i < len)
-		nb = (nb * 10) + (str[i++] - 48);
-	return (nb);
+	write(1, &c, 1);
 }
 
-void	ft_send_signal(int pid, char c)
+void	ft_putstr(char *s)
 {
-	int	arr[8];
-	int	n;
 	int	i;
 
-	n = c;
-	i = 7;
-	while (i >= 0)
+	i = 0;
+	while (s[i])
 	{
-		if (n == 0 || (n & 1) == 0)
-			arr[i] = 0;
-		else if ((n & 1) == 1)
-			arr[i] = 1;
-		if (n > 0)
-			n >>= 1;
-		i--;
+		ft_putchar(s[i]);
+		i++;
 	}
-	while (++i < 8)
+}
+void	send_binary_signal(char *binary, int sp_id)
+{
+	int	i;
+
+	i = 0;
+	while (binary[i])
 	{
-		if (arr[i] == 0)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		usleep(50);
+		if (binary[i] == '0')
+			kill(sp_id, SIGUSR2);
+		else if (binary[i] == '1')
+			kill(sp_id, SIGUSR1);
+		usleep(300);
+		i++;
 	}
+}
+
+void	send_client_pid(int server_pid)
+{
+	char	*cpid;
+	int		i;
+	char	*c_binary;
+	int		x;
+	char	*s;
+
+	i = 0;
+	if (kill(server_pid,0) == -1)
+	{
+		s = "Error: PID invalid\n";
+		ft_putstr(s);
+		exit(1);
+	}
+	cpid = itoa_pid(getpid());
+	while (cpid[i])
+	{
+		c_binary = convertbinary(cpid[i]);
+		x = 0;
+		while (c_binary[x])
+		{
+			if (c_binary[x] == '0')
+				kill(server_pid, SIGUSR2);
+			else if (c_binary[x] == '1')
+				kill(server_pid, SIGUSR1);
+			usleep(300);
+			x++;
+		}
+		free(c_binary);
+		i++;
+	}
+	free(cpid);
+}
+
+void	message(int signum)
+{
+	if (signum == SIGUSR1)
+		write(1, "SUCCESS!\n", 10);
 }
 
 int	main(int argc, char **argv)
 {
-	int	pid;
+	int		i;
+	int		len;
+	char	*binary;
+	char	*s;
+	int		server_pid;
 
-	if (argc != 3)
-		write(1, "Error, Is the PID correct? YOU EITHER LEFT IT BLANK OR ARE DOING MORE THAN 1 WORD with double quotes\n", 102);
+	i = 0;
+	signal(SIGUSR1, message);
+	if (argc == 3)
+	{
+		server_pid = ft_atoi(argv[1]);
+		if (server_pid <= 0)
+		{
+			s = "Error: Invalid server PID\n";
+			ft_putstr(s);
+			return (1);
+		}
+		send_client_pid(server_pid);
+		len = ft_strlen(argv[2]);
+		while (len >= i)
+		{
+			binary = convertbinary(argv[2][i]);
+			send_binary_signal(binary, server_pid);
+			free(binary);
+			i++;
+		}
+	}
 	else
 	{
-		pid = ft_atoi(argv[1]);
-		while (argv[2] && *argv[2])
-			ft_send_signal(pid, *argv[2]++);
-		ft_send_signal(pid, '\n');
+		s = "ERROR Check your message or PID\n";
+		ft_putstr(s);
+		return (1);
 	}
 	return (0);
 }

@@ -5,56 +5,68 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rbuitrag <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/03 17:33:52 by rbuitrag          #+#    #+#             */
-/*   Updated: 2024/07/03 17:52:38 by rbuitrag         ###   ########.fr       */
+/*   Created: 2024/07/09 16:23:28 by rbuitrag          #+#    #+#             */
+/*   Updated: 2024/07/09 16:23:31 by rbuitrag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
 
-void	ft_putnbr(long nbr)
+#include"minitalk.h"
+
+static int	g_x = 0;
+
+void	take_client_pid(int nb, int bol)
 {
-	char	temp;
+	static int	result = 0;
 
-	if (nbr / 10 > 0)
-		ft_putnbr(nbr / 10);
-	temp = nbr % 10 + '0';
-	write(1, &temp, 1);
+	if (nb >= 0)
+	{
+		result *= 10;
+		result += (nb - '0');
+	}
+	if (bol)
+	{
+		kill(result, SIGUSR1);
+		g_x = 1;
+		result = 0;
+	}
 }
 
-void	sig_handle(int signal)
+void	signal_handler(int signum)
 {
-	static int	i;
-	static int	n;
-	int		nb;
+	static int	str1 = 0;
+	static int	i = 0;
 
-	if (signal == SIGUSR1)
-		nb = 0;
-	else
-		nb = 1;
-	n = (n << 1) + nb;
-	i++;
-	if (i == 8)
+	if (signum == SIGUSR1)
+		str1 = str1 | 1;
+	if (++i == 8)
 	{
-		write(1, &n, 1);
+		if (str1 == 27)
+			take_client_pid (-1, 1);
+		else if (g_x)
+			write (1, &str1, 1);
+		else if (!g_x)
+			take_client_pid(str1, 0);
+		if (!str1)
+		{
+			g_x = 0;
+			write(1, "\n", 1);
+		}
+		str1 = 0;
 		i = 0;
-		n = 0;
-	}
+	}	
+	else
+		str1 <<= 1;
 }
 
 int	main(void)
 {
-	struct sigaction	sigact;
-
-	sigact.sa_handler = &sig_handle;
-	sigact.sa_flags = SA_RESTART;
-	sigaction(SIGUSR1, &sigact, 0);
-	sigaction(SIGUSR2, &sigact, 0);
-	write(1, "\nWelcome to rbuitrag minitalk!\n", 32);
-	write(1, "\nThe server is up and running. It's PID is: ", 44);
+	write(1, "serverPID: ", 12);
 	ft_putnbr(getpid());
 	write(1, "\n", 1);
+	signal(SIGUSR1, signal_handler);
+	signal(SIGUSR2, signal_handler);
 	while (1)
-		usleep(100);
+		pause ();
 	return (0);
 }

@@ -5,48 +5,34 @@
 #                                                     +:+ +:+         +:+      #
 #    By: rbuitrag <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/07/03 17:36:40 by rbuitrag          #+#    #+#              #
-#    Updated: 2024/07/03 17:54:57 by rbuitrag         ###   ########.fr        #
+#    Created: 2024/07/09 16:21:28 by rbuitrag          #+#    #+#              #
+#    Updated: 2024/07/09 16:45:47 by rbuitrag         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	=	minitalk
+NAME = program
+SERVER = server
+CLIENT = client
+CC = gcc
+LIB = ./utils.c
 
-CC		=	cc
-CFLAGS	=	-Wall -Werror -Wextra
-RM	=	rm -f
+CFLAGS = -Wall -Werror -Wextra -fsanitize=leak
 
-CLIENT	=	client
-SERVER	=	server
+all: $(SERVER) $(CLIENT)
 
-RED	=	\033[91;1m
-GREEN	=	\033[92;1m
-YELLOW	=	\033[93;1m
-BLUE	=	\033[94;1m
-PINK	=	\033[95;1m
-CLEAR	=	\033[0m
+$(NAME): all
 
-all:		$(NAME)
+$(SERVER):
+	$(CC) $(CFLAGS) server.c $(LIB) -o $(SERVER)
 
-$(SERVER):	$(SERVER).c minitalk.h
-			@echo "$(BLUE)Make all$(CLEAR)\n$(PINK)Compiling the server.$(CLEAR)"
-			@$(CC) $(CFLAGS) -o $(SERVER) $(SERVER).c
-			@echo "$(GREEN)[OK]$(CLEAR)"
-
-$(CLIENT):	$(CLIENT).c minitalk.h
-			@echo "$(PINK)Compiling the Client.$(CLEAR)\n$(GREEN)[OK]$(CLEAR)"
-			@$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT).c
-			@echo "$(GREEN)Success!$(CLEAR)\n$(YELLOW)Finished$(CLEAR)\n"
-
-$(NAME):	$(SERVER) $(CLIENT)
+$(CLIENT):
+	$(CC) $(CFLAGS) client.c $(LIB) -o $(CLIENT)
 
 clean:
-			@echo "$(BLUE)Make clean/fclean$(CLEAR)\n$(RED)Removing all compiled files.$(CLEAR)"
-			@$(RM) $(CLIENT) $(SERVER)
-			@echo "$(GREEN)Success!$(CLEAR)\n$(YELLOW)Finished$(CLEAR)\n"
+	rm -rf $(SERVER) $(CLIENT)
 
-fclean:		clean
+fclean: clean
 
-re:			fclean all
+re: fclean all
 
-.PHONY: 	all clean fclean re
+.PHONY: all flean clean re
