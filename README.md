@@ -47,6 +47,38 @@ El PID del servidor.
 La cadena a enviar.
 El cliente debe enviar al servidor la cadena pasada como parámetro. Una vez recibida la cadena, el servidor debe imprimirla.
 
+Explicación Visual y Ejemplos
+============================================================
+Gráfico 1: Comunicación Cliente-Servidor
+
+Cliente
+  |
+  |-- (Señal con PID del Cliente en binario) -->
+  |
+Servidor
+
+Servidor
+  |
+  |-- (Señal de confirmación SIGUSR1) -->
+  |
+Cliente
+
+    Cliente envía su PID en binario: El cliente convierte su PID a binario y envía cada bit como una señal al servidor.
+    Servidor envía confirmación: Cuando el servidor recibe correctamente el PID del cliente, envía una señal de confirmación.
+
+Gráfico 2: Envío de Mensajes
+
+
+
+Cliente
+  |
+  |-- (Señal con mensaje en binario) -->
+  |
+Servidor
+
+    Cliente convierte el mensaje a binario: Cada carácter del mensaje se convierte a binario.
+    Cliente envía señales: Envía cada bit del mensaje como una señal.
+
 
 Bibliography
 =================================
