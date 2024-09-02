@@ -80,15 +80,8 @@ Servidor
     Cliente envía señales: Envía cada bit del mensaje como una señal.
 
 
-### Plan:
-1. Analizar el contenido del archivo [`minitalk.h`](command:_github.copilot.openRelativePath?%5B%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Frbuitrag%2FDocuments%2FCursus42%2FCircle_2%2FMinitalk%2FEntrega%2Finc%2Fminitalk.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%5D "/home/rbuitrag/Documents/Cursus42/Circle_2/Minitalk/Entrega/inc/minitalk.h").
-2. Analizar el contenido de los archivos `.c` correspondientes.
-3. Crear un archivo `explicacion_minitalk.txt`.
-4. Escribir la explicación detallada en el archivo.
-
-### Explicación detallada:
-
 #### Archivo: [`minitalk.h`])
+*************************************
 Este archivo contiene las definiciones y declaraciones necesarias para el proyecto Minitalk. Incluye las bibliotecas estándar y define varias constantes de error y una estructura para el servidor.
 
 **Definiciones de errores:**
@@ -108,8 +101,8 @@ typedef struct s_server
 	int				bit;           // Bit actual en transmisión
 	int				transmiting;   // Estado de transmisión
 }	t_server;
-```
 
+======================================================================
 **Funciones declaradas en [`minitalk.h`]**
 
 - [`void manage_errors_c(char *error);  
@@ -133,6 +126,7 @@ typedef struct s_server
 - [`void reset_server(char *error);
   Reinicia el servidor.
 
+=============================================================
 #### Archivo: client.c
 ***********************************
 Este archivo contiene la lógica del cliente que envía mensajes al servidor.
@@ -154,15 +148,6 @@ Este archivo contiene la lógica del cliente que envía mensajes al servidor.
  "void init_server(void);  // Inicializa el servidor" 
  "void manage_errors_s(char *error);  // Maneja errores en el servidor" 
  "void reset_server(char *error);  // Reinicia el servidor"
-
-# Explicación de client.c
-********************************
-client.c" >> explicacion_minitalk.txt
-"Este archivo contiene la lógica del cliente que envía mensajes al servidor." 
-
-"Funciones en client.c:" 
-"int main(int argc, char **argv);  // Función principal del cliente" 
-"void send_signal_c(int pid, int signal);  // Envía una señal al servidor" 
 
 
 # Explicación de server.c
