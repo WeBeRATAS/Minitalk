@@ -80,6 +80,103 @@ Servidor
     Cliente envía señales: Envía cada bit del mensaje como una señal.
 
 
+### Plan:
+1. Analizar el contenido del archivo [`minitalk.h`](command:_github.copilot.openRelativePath?%5B%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Frbuitrag%2FDocuments%2FCursus42%2FCircle_2%2FMinitalk%2FEntrega%2Finc%2Fminitalk.h%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%5D "/home/rbuitrag/Documents/Cursus42/Circle_2/Minitalk/Entrega/inc/minitalk.h").
+2. Analizar el contenido de los archivos `.c` correspondientes.
+3. Crear un archivo `explicacion_minitalk.txt`.
+4. Escribir la explicación detallada en el archivo.
+
+### Explicación detallada:
+
+#### Archivo: [`minitalk.h`])
+Este archivo contiene las definiciones y declaraciones necesarias para el proyecto Minitalk. Incluye las bibliotecas estándar y define varias constantes de error y una estructura para el servidor.
+
+**Definiciones de errores:**
+- [`ERROR_1`] "Signal error\n"
+- [`ERROR_2`] "Arguments error, please retry\n"
+- [`ERROR_3`] "PID error, retry\n"
+- [`ERROR_4`] "Connection error\n"
+- [`ERROR_5`] "Empty message\n"
+- [`ERROR_6`] "Server busy. Try later\n"
+- [`ERROR_7`] "Connection error\n"
+
+**Estructura [`t_server`]:**
+typedef struct s_server
+{
+	int				pid_client;    // PID del cliente
+	unsigned char	chr;           // Caracter a transmitir
+	int				bit;           // Bit actual en transmisión
+	int				transmiting;   // Estado de transmisión
+}	t_server;
+```
+
+**Funciones declaradas en [`minitalk.h`]**
+
+- [`void manage_errors_c(char *error);  
+  Maneja errores en el cliente.
+  
+- [`void send_signal_s(int pid, int signal);
+  Envía señales desde el servidor.
+  
+- [`void check_arg(char *arg_1, char *arg_2);
+  Verifica los argumentos.
+  
+- [`void send_signal_c(int pid, int signal);
+  Envía señales desde el cliente.
+  
+- [`void init_server(void);
+  Inicializa el servidor.
+  
+- [`void manage_errors_s(char *error);
+  Maneja errores en el servidor.
+  
+- [`void reset_server(char *error);
+  Reinicia el servidor.
+
+#### Archivo: client.c
+***********************************
+Este archivo contiene la lógica del cliente que envía mensajes al servidor.
+
+**Funciones en `client.c`:**
+- `int main(int argc, char **argv);`  
+  Función principal del cliente. Verifica los argumentos, convierte el PID del servidor y el mensaje a enviar, y llama a [`send_signal_c para enviar cada bit del mensaje al servidor.
+
+- [`void send_signal_c(int pid, int signal);
+  Envía una señal al servidor. Utiliza `kill` para enviar señales SIGUSR1 o SIGUSR2 dependiendo del bit del mensaje.
+
+
+"Funciones declaradas en minitalk.h:"
+*******************************************
+"void manage_errors_c(char *error);  // Maneja errores en el cliente" 
+"void send_signal_s(int pid, int signal);  // Envía señales desde el servidor" 
+ "void check_arg(char *arg_1, char *arg_2);  // Verifica los argumentos" 
+ "void send_signal_c(int pid, int signal);  // Envía señales desde el cliente"
+ "void init_server(void);  // Inicializa el servidor" 
+ "void manage_errors_s(char *error);  // Maneja errores en el servidor" 
+ "void reset_server(char *error);  // Reinicia el servidor"
+
+# Explicación de client.c
+********************************
+client.c" >> explicacion_minitalk.txt
+"Este archivo contiene la lógica del cliente que envía mensajes al servidor." 
+
+"Funciones en client.c:" 
+"int main(int argc, char **argv);  // Función principal del cliente" 
+"void send_signal_c(int pid, int signal);  // Envía una señal al servidor" 
+
+
+# Explicación de server.c
+**********************************
+Este archivo contiene la lógica del servidor que recibe y procesa los mensajes del cliente."
+
+"Funciones en server.c:" 
+"int main(void);  // Función principal del servidor" 
+ "void init_server(void);  // Inicializa la estructura del servidor" 
+"void handle_signal(int sig, siginfo_t *info, void *context);  // Manejador de señales" >
+"void manage_errors_s(char *error);  // Maneja errores en el servidor" 
+"void reset_server(char *error);  // Reinicia el servidor en caso de error" 
+
+
 Bibliography
 =================================
 Signal (IPC)
