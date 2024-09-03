@@ -127,7 +127,9 @@ typedef struct s_server
   Reinicia el servidor.
 
 =============================================================
-#### Archivo: client.c
+
+**Archivo: client.c**
+======================================================
 ***********************************
 Lógica de Uso de Variables Globales
 ====================================
@@ -198,8 +200,9 @@ Revisa que todos los caracteres de arg_1 sean dígitos, llamando a manage_errors
  "void manage_errors_s(char *error);  // Maneja errores en el servidor" 
  "void reset_server(char *error);  // Reinicia el servidor"
 
-
-# Explicación de server.c
+======================================================
+# Explicación de server.c **
+*****************************
 =========================================================
 Este archivo contiene la lógica del servidor que recibe y procesa los mensajes del cliente."
 
