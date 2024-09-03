@@ -150,7 +150,7 @@ Propósito: Envía un carácter al servidor como una serie de señales.
 Lógica:
 Itera sobre cada bit del carácter (8 bits en total).
 Establece g_checker a 0 y envía SIGUSR1 si el bit correspondiente es 1, o SIGUSR2 si es 0.
-Espera a que g_checker se establezca en 1 antes de continuar, asegurando que la señal fue recibida.
+Espera a que g_checker se establezca en 1 antes de continuar, asegurando que la señal fue recibida. (Esto es muy util para que al procesar todos los bits uno a uno mejora la seguridad de comunicacion del proceso)
 
 **********************************************************
 **3. client_loop(int pid, char *str)**
@@ -168,6 +168,25 @@ Verifica que se pasen los argumentos correctos (PID y mensaje).
 Llama a client_loop para iniciar el envío de mensajes al servidor.
 Maneja errores si los argumentos no son válidos.
 
+===================================================
+Client_utils.c
+*****************************************
+** void manage_errors_c(char *error) **
+Propósito: Maneja errores imprimiendo un mensaje y terminando el programa.
+Lógica: Utiliza ft_putstr_fd para imprimir el mensaje de error en la salida de error estándar y luego termina el programa con exit(EXIT_FAILURE).
+
+** void send_signal_s(int pid, int signal) **
+Propósito: Envía una señal a un proceso específico.
+Lógica: Utiliza kill para enviar la señal y maneja errores llamando a manage_errors_c si la señal no se envía correctamente.
+
+** void check_arg(char *arg_1, char *arg_2)**
+Propósito: Verifica la validez de los argumentos pasados al programa.
+Lógica:
+Asegura que arg_2 no esté vacío.
+Convierte arg_1 a un entero y verifica que sea positivo.
+Revisa que todos los caracteres de arg_1 sean dígitos, llamando a manage_errors_c si alguna de estas condiciones falla.
+
+
 
 "Funciones declaradas en minitalk.h:"
 *******************************************
@@ -181,7 +200,7 @@ Maneja errores si los argumentos no son válidos.
 
 
 # Explicación de server.c
-**********************************
+=========================================================
 Este archivo contiene la lógica del servidor que recibe y procesa los mensajes del cliente."
 
 "Funciones en server.c:" 
@@ -191,6 +210,65 @@ Este archivo contiene la lógica del servidor que recibe y procesa los mensajes 
 "void manage_errors_s(char *error);  // Maneja errores en el servidor" 
 "void reset_server(char *error);  // Reinicia el servidor en caso de error" 
 
+===============================================================================
+
+
+**1. init_server()**
+*********************************
+
+Propósito: Inicializa la estructura g_server estableciendo todos sus campos a cero.
+Lógica: Se asegura de que el servidor comience en un estado limpio, listo para recibir conexiones y datos.
+
+**2. print_bits(int sig, siginfo_t *info, void *context)**
+**********************************************************
+
+Propósito: Maneja la recepción de señales y reconstruye los bits del mensaje enviado por el cliente.
+Lógica:
+Si recibe SIGUSR1, se establece el bit correspondiente en g_server.chr.
+Incrementa el contador de bits (g_server.bit).
+Cuando se han recibido 8 bits, verifica si el carácter es el terminador ('\0'). Si es así, imprime un mensaje de recepción y envía una señal de confirmación al cliente.
+Imprime el carácter recibido y reinicia los contadores.
+
+**3. client_conections(int sig, siginfo_t *info, void *context)**
+***************************************************************
+
+Propósito: Maneja las conexiones de los clientes y determina qué acción tomar según la señal recibida.
+Lógica:
+Si no hay un cliente conectado (g_server.pid_client == 0), se establece el PID del cliente.
+Si el PID del cliente es diferente y ya hay una conexión activa, se envía una señal de error.
+Si el PID coincide, se llama a print_bits para procesar los datos.
+
+**4. server_loop()**
+*********************************************************************
+
+Propósito: Mantiene el servidor en funcionamiento, enviando señales al cliente si está conectado.
+Lógica: En un bucle infinito, verifica si hay un cliente conectado y envía señales de confirmación. Utiliza usleep para evitar un uso excesivo de CPU.
+
+**5. main(int argc, char **argv)**
+*********************************************
+
+Propósito: Punto de entrada del programa, configura el servidor y comienza el bucle de escucha.
+Lógica:
+Configura las acciones de señal para SIGUSR1 y SIGUSR2.
+Verifica que no se pasen argumentos no deseados.
+Imprime el PID del servidor y llama a init_server y server_loop para comenzar a recibir conexiones.
+
+=============================================
+**server_utils.c**
+************************************************
+
+**send_signal_c(int pid, int signal)**
+Función: Envía una señal al cliente.
+Lógica: Similar a send_signal_s, pero si hay un error, llama a reset_server en lugar de manage_errors_c.
+
+**reset_server(char *error)**
+Función: Reinicia el estado del servidor.
+Lógica: Imprime un mensaje de error y reinicia las variables del servidor llamando a init_server.
+
+**manage_errors_s(char *error)**
+Función: Maneja errores específicos del servidor.
+Lógica: Imprime el mensaje de error y termina el programa.
+***********************************************************************
 
 Bibliography
 =================================
