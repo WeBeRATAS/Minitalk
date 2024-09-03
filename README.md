@@ -130,15 +130,16 @@ typedef struct s_server
 #### Archivo: client.c
 ***********************************
 Lógica de Uso de Variables Globales
-++++++++++++++++++++++++++++++++++++
+====================================
 Accesibilidad: Al ser global, g_checker puede ser accedida y modificada por múltiples funciones sin necesidad de pasarla como argumento. Esto es útil en situaciones donde varias funciones necesitan compartir un estado común, como en la recepción de señales.
 Sincronización: En este código, g_checker actúa como un indicador que permite a la función send_to_server saber cuándo ha sido recibida una señal específica. Esto es crucial en la programación de señales, donde el flujo de ejecución puede ser interrumpido por eventos externos.
 Simplicidad: Usar una variable global puede simplificar el código al evitar la necesidad de pasar múltiples parámetros entre funciones, especialmente en un contexto donde el estado debe ser compartido.
 
 **Resumen de Funciones en client.c**
+==========================================
+
 **1. recive_signal(int sig, siginfo_t *info, void *context)**
 Propósito: Maneja las señales recibidas (SIGUSR1 y SIGUSR2).
-
 Lógica:
 Si recibe SIGUSR1, establece g_checker a 1 y marca connected como 1, indicando que el cliente está conectado.
 Si recibe SIGUSR2 y connected es verdadero, imprime un mensaje de éxito y termina el programa.
@@ -146,22 +147,21 @@ Si recibe SIGUSR2 y connected es falso, llama a manage_errors_c(ERROR_6) y termi
 
 **2. send_to_server(int pid, char c)**
 Propósito: Envía un carácter al servidor como una serie de señales.
-
 Lógica:
 Itera sobre cada bit del carácter (8 bits en total).
 Establece g_checker a 0 y envía SIGUSR1 si el bit correspondiente es 1, o SIGUSR2 si es 0.
 Espera a que g_checker se establezca en 1 antes de continuar, asegurando que la señal fue recibida.
 
+**********************************************************
 **3. client_loop(int pid, char *str)**
 Propósito: Envía una cadena de caracteres al servidor.
-
 Lógica:
 Itera sobre cada carácter de la cadena hasta el carácter nulo ('\0').
 Llama a send_to_server para cada carácter, y finalmente envía un carácter nulo para indicar el final de la cadena.
 
+****************************************
 **4. main(int argc, char **argv)**
 Propósito: Punto de entrada del programa.
-
 Lógica:
 Configura la acción de las señales para SIGUSR1 y SIGUSR2 utilizando sigaction.
 Verifica que se pasen los argumentos correctos (PID y mensaje).
